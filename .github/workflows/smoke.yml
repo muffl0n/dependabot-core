@@ -16,7 +16,7 @@ concurrency:
 
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  SMOKE_TEST_BRANCH: main
+  SMOKE_TEST_BRANCH: dev/brettfo/nuget-analyze-command
 jobs:
   discover:
     runs-on: ubuntu-latest
