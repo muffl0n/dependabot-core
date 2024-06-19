@@ -68,14 +68,20 @@ module Dependabot
       def gemfile
         return @gemfile if defined?(@gemfile)
 
-        @gemfile = T.let(fetch_file_if_present("gems.rb") || fetch_file_if_present("Gemfile"), T.nilable(Dependabot::DependencyFile))
+        @gemfile = T.let(
+          fetch_file_if_present("gems.rb") || fetch_file_if_present("Gemfile"),
+          T.nilable(Dependabot::DependencyFile)
+        )
       end
 
       sig { returns(T.nilable(DependencyFile)) }
       def lockfile
         return @lockfile if defined?(@lockfile)
 
-        @lockfile = T.let(fetch_file_if_present("gems.locked") || fetch_file_if_present("Gemfile.lock"), T.nilable(Dependabot::DependencyFile))
+        @lockfile = T.let(
+          fetch_file_if_present("gems.locked") || fetch_file_if_present("Gemfile.lock"),
+          T.nilable(Dependabot::DependencyFile)
+        )
       end
 
       sig { returns(T::Array[Dependabot::DependencyFile]) }
@@ -90,7 +96,10 @@ module Dependabot
               .map { |f| File.join(d, f.name) }
           end
 
-        @gemspecs = T.let(gemspecs_paths.map { |n| fetch_file_from_host(n) }, T.nilable(T::Array[Dependabot::DependencyFile]))
+        @gemspecs ||= T.let(
+          gemspecs_paths.map { |n| fetch_file_from_host(n) },
+          T.nilable(T::Array[Dependabot::DependencyFile])
+        )
       rescue Octokit::NotFound
         []
       end
@@ -221,7 +230,10 @@ module Dependabot
         lockfile&.content&.gsub(regex, "")
       end
 
-      sig { params(file: DependencyFile, previously_fetched_files: T::Array[DependencyFile]).returns(T::Array[DependencyFile]) }
+      sig do
+        params(file: DependencyFile,
+               previously_fetched_files: T::Array[DependencyFile]).returns(T::Array[DependencyFile])
+      end
       def fetch_child_gemfiles(file:, previously_fetched_files:)
         paths = ChildGemfileFinder.new(gemfile: file).child_gemfile_paths
 
